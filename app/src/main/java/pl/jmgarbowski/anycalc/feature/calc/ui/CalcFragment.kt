@@ -14,7 +14,7 @@ import javax.inject.Inject
 class CalcFragment : Fragment(), CalcMVP.View {
 
     @Inject
-    lateinit var calculator: Calculator
+    lateinit var presenter: CalcMVP.Presenter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,6 +23,30 @@ class CalcFragment : Fragment(), CalcMVP.View {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_calc, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        presenter.bind(this)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        if (!presenter.isViewBound()) {
+            presenter.bind(this)
+        }
+    }
+
+    override fun onDestroyView() {
+        if (presenter.isViewBound()) {
+            presenter.unbind()
+        }
+        super.onDestroyView()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        presenter.unbind()
+        super.onSaveInstanceState(outState)
     }
 
     override fun displayEquation(equation: String) {
