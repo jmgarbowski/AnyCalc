@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#008577</color>
-    <color name="colorPrimaryDark">#00574B</color>
+    <color name="colorPrimary">#1C313A</color>
+    <color name="colorPrimaryDark">#121F25</color>
     <color name="colorAccent">#D81B60</color>
+    
+    <!--Calc screen-->
+    <color name="calcDisplayBackground">#1C313A</color>
+    <color name="calcDisplayTextColor">#FFFFFF</color>
+    <color name="calcKeypadEqualSignBackground">#C53D13</color>
+    <color name="calcKeypadBackground">#455A64</color>
+    <color name="calcKeypadTextColor">#FFFFFF</color>
 </resources>
