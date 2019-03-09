@@ -9,5 +9,6 @@
     <color name="calcDisplayTextColor">#FFFFFF</color>
     <color name="calcKeypadEqualSignBackground">#C53D13</color>
     <color name="calcKeypadBackground">#455A64</color>
+    <color name="calcKeypadRipple">#62808D</color>
     <color name="calcKeypadTextColor">#FFFFFF</color>
 </resources>

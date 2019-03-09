@@ -1,3 +1,24 @@
 <resources>
     <string name="app_name">AnyCalc</string>
+
+    <!--Calc Screen-->
+    <string name="calc_keypad_key_1">1</string>
+    <string name="calc_keypad_key_2">2</string>
+    <string name="calc_keypad_key_3">3</string>
+    <string name="calc_keypad_key_4">4</string>
+    <string name="calc_keypad_key_5">5</string>
+    <string name="calc_keypad_key_6">6</string>
+    <string name="calc_keypad_key_7">7</string>
+    <string name="calc_keypad_key_8">8</string>
+    <string name="calc_keypad_key_9">9</string>
+    <string name="calc_keypad_key_0">0</string>
+    <string name="calc_keypad_key_comma">.</string>
+    <string name="calc_keypad_key_plus">+</string>
+    <string name="calc_keypad_key_minus">-</string>
+    <string name="calc_keypad_key_result">=</string>
+    <string name="calc_keypad_key_left_parenthesis">(</string>
+    <string name="calc_keypad_key_right_parenthesis">)</string>
+    <string name="calc_keypad_key_c">\u2190</string>
+    <string name="calc_keypad_key_obelus">\u00F7</string>
+    <string name="calc_keypad_key_multiplication">\u00D7</string>
 </resources>
