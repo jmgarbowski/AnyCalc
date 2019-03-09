@@ -14,49 +14,47 @@ class CalcPresenter @Inject constructor(private val calculator: Calculator) : Ca
     }
 
     private var view: CalcMVP.View? = null
-    private var calculatorSb: StringBuilder = StringBuilder(equationMaxLength)
-    private var displaySb: StringBuilder = StringBuilder(equationMaxLength)
+    private var equationSb: StringBuilder = StringBuilder(equationMaxLength)
 
     /**
      * CalcMVP.Presenter
      */
     override fun keyClick(char: Char) {
-        val lastElement = displaySb.length - 1
-        if (isOperator(char)) {
-            if (displaySb.isEmpty()) return
-            if (displaySb.isNotEmpty() && isOperator(displaySb.elementAt(lastElement))) {
-                    displaySb.deleteCharAt(lastElement)
+        if (equationSb.length == equationMaxLength) return
+        when {
+            isOperator(char) -> {
+                if (equationSb.isEmpty()
+                    || isLastItemComma()) return
+                if (isLastItemOperator()) removeLastItemOperator()
+                equationSb.append(changeOperatorSymbol(char))
             }
-            when (char) {
-                '*' -> displaySb.append('\u00D7')
-                '/' -> displaySb.append('\u00F7')
-                else -> displaySb.append(char)
+            isComma(char) -> {
+                if (equationSb.isEmpty()
+                    || isLastItemComma()
+                    || isLastItemOperator()) return
+                    equationSb.append(char)
             }
-            calculatorSb.append(char)
-        } else {
-            displaySb.append(char)
-            calculatorSb.append(char)
+            else -> {
+                equationSb.append(char)
+            }
         }
 
-        view?.displayEquation(displaySb.toString())
-            .also { Timber.d("Equation: $displaySb.toString()") }
+        view?.displayEquation(equationSb.toString())
+            .also { Timber.d("Equation: $equationSb.toString()") }
     }
 
     override fun equalSignClick() {
-        view?.displayResult(calculator.evaluate(calculatorSb.toString()))
+        view?.displayResult(calculator.evaluate(equationSb.toString()))
     }
 
     override fun eraseClick() {
-        view?.displayEquation(
-            if (displaySb.isNotEmpty())
-                displaySb.deleteCharAt(displaySb.length - 1).toString()
-            else ""
-        )
+        removeLastElement()
+        view?.displayEquation(equationSb.toString())
     }
 
     //Clear all rows
     override fun erasePress() {
-        view?.displayEquation(displaySb.clear().toString())
+        view?.displayEquation(equationSb.clear().toString())
         view?.displayResult("")
     }
 
@@ -75,7 +73,38 @@ class CalcPresenter @Inject constructor(private val calculator: Calculator) : Ca
         return this.view != null
     }
 
-    private fun isOperator(char: Char) : Boolean {
+    private fun isOperator(char: Char): Boolean {
         return operators.contains(char)
     }
+
+    private fun isComma(char: Char): Boolean {
+        return char == '.'
+    }
+
+    private fun changeOperatorSymbol(char: Char): Char {
+        return when (char) {
+            '*' -> '\u00D7'
+            '/' -> '\u00F7'
+            else -> char
+        }
+    }
+
+    private fun isLastItemOperator(): Boolean {
+        return (isOperator(equationSb.elementAt(equationSb.length - 1)))
+    }
+
+    private fun isLastItemComma(): Boolean {
+        return (isComma(equationSb.elementAt(equationSb.length - 1)))
+    }
+
+    private fun removeLastItemOperator() {
+        if (equationSb.isNotEmpty())
+            equationSb.deleteCharAt(equationSb.length - 1)
+    }
+
+    private fun removeLastElement() {
+        if (equationSb.isNotEmpty())
+            equationSb.deleteCharAt(equationSb.length - 1)
+    }
+
 }
