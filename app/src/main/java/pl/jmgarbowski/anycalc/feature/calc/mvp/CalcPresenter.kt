@@ -15,6 +15,7 @@ class CalcPresenter @Inject constructor(private val calculator: Calculator) : Ca
 
     private var view: CalcMVP.View? = null
     private var equationSb: StringBuilder = StringBuilder(equationMaxLength)
+    private var commaLocked: Boolean = false //helper flag to decide comma char should be added to builder
 
     /**
      * CalcMVP.Presenter
@@ -27,12 +28,15 @@ class CalcPresenter @Inject constructor(private val calculator: Calculator) : Ca
                     || isLastItemComma()) return
                 if (isLastItemOperator()) removeLastItemOperator()
                 equationSb.append(changeOperatorSymbol(char))
+                commaLocked = false
             }
             isComma(char) -> {
                 if (equationSb.isEmpty()
                     || isLastItemComma()
-                    || isLastItemOperator()) return
+                    || isLastItemOperator()
+                    || commaLocked) return
                     equationSb.append(char)
+                commaLocked = true
             }
             else -> {
                 equationSb.append(char)
@@ -56,6 +60,7 @@ class CalcPresenter @Inject constructor(private val calculator: Calculator) : Ca
     override fun erasePress() {
         view?.displayEquation(equationSb.clear().toString())
         view?.displayResult("")
+        commaLocked = false
     }
 
     /**
@@ -103,8 +108,10 @@ class CalcPresenter @Inject constructor(private val calculator: Calculator) : Ca
     }
 
     private fun removeLastElement() {
-        if (equationSb.isNotEmpty())
+        if (equationSb.isNotEmpty()) {
+            if (isLastItemComma()) commaLocked = false
             equationSb.deleteCharAt(equationSb.length - 1)
+        }
     }
 
 }

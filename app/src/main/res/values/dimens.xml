@@ -3,8 +3,9 @@
     <!--Calc screen-->
     <dimen name="calcDisplayEquationRowHeight">64dp</dimen>
     <dimen name="calcDisplayResultRowHeight">96dp</dimen>
-    <dimen name="calcDisplayEquationTextSize">32sp</dimen>
+    <dimen name="calcDisplayEquationTextSize">48sp</dimen>
     <dimen name="calcDisplayResultTextSize">64sp</dimen>
+    <dimen name="calcKeypadTextSize">64sp</dimen>
     <dimen name="calcKeypadKeySize">96dp</dimen>
     <dimen name="calcScreenPadding">8dp</dimen>
 </resources>
