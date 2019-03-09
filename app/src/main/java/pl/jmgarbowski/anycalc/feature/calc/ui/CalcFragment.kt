@@ -71,6 +71,10 @@ class CalcFragment : Fragment(), CalcMVP.View {
         resultText.text = result
     }
 
+    override fun displayError(error: String) {
+        resultText.text = error
+    }
+
     @OnClick(
         R.id.keypad_0, R.id.keypad_1, R.id.keypad_2, R.id.keypad_3,
         R.id.keypad_4, R.id.keypad_5, R.id.keypad_6, R.id.keypad_7,
