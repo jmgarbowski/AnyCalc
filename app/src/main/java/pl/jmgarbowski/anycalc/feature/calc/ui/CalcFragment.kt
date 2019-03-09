@@ -10,6 +10,7 @@ import butterknife.*
 import pl.jmgarbowski.anycalc.R
 import pl.jmgarbowski.anycalc.feature.calc.mvp.CalcMVP
 import pl.jmgarbowski.anycalc.main.di.MainActivityInjector
+import timber.log.Timber
 import javax.inject.Inject
 
 class CalcFragment : Fragment(), CalcMVP.View {
@@ -32,13 +33,14 @@ class CalcFragment : Fragment(), CalcMVP.View {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_calc, container, false)
-        unbinder = ButterKnife.bind(this, view)
         return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        unbinder = ButterKnife.bind(this, view)
         presenter.bind(this)
+        Timber.d("View created")
     }
 
     override fun onStart() {
@@ -76,6 +78,7 @@ class CalcFragment : Fragment(), CalcMVP.View {
         R.id.keypad_minus, R.id.keypad_multiply, R.id.keypad_division,
         R.id.keypad_left_p, R.id.keypad_right_p)
     fun onKeypadClick(view: View) {
+        Timber.d("On keypad clicked")
         when(view.id) {
             R.id.keypad_0 -> presenter.keyClick('0')
             R.id.keypad_1 -> presenter.keyClick('1')

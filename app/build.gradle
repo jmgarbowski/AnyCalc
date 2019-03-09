@@ -52,7 +52,7 @@ dependencies {
 
     //layout binding
     implementation "com.jakewharton:butterknife:${versions.butterknife}"
-    annotationProcessor "com.jakewharton:butterknife-compiler:${versions.butterknife}"
+    kapt "com.jakewharton:butterknife-compiler:${versions.butterknife}"
 
     //testing
     testImplementation "junit:junit:${versions.junit}"
