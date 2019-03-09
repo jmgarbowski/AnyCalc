@@ -5,6 +5,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import butterknife.ButterKnife
+import butterknife.Unbinder
 import pl.jmgarbowski.anycalc.R
 import pl.jmgarbowski.anycalc.feature.calc.evaluation.Calculator
 import pl.jmgarbowski.anycalc.feature.calc.mvp.CalcMVP
@@ -16,13 +18,17 @@ class CalcFragment : Fragment(), CalcMVP.View {
     @Inject
     lateinit var presenter: CalcMVP.Presenter
 
+    private lateinit var unbinder: Unbinder
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         inject()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_calc, container, false)
+        val view = inflater.inflate(R.layout.fragment_calc, container, false)
+        unbinder = ButterKnife.bind(this, view)
+        return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -42,6 +48,7 @@ class CalcFragment : Fragment(), CalcMVP.View {
             presenter.unbind()
         }
         super.onDestroyView()
+        unbinder.unbind()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
