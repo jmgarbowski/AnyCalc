@@ -4,11 +4,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.fragment.app.Fragment
-import butterknife.ButterKnife
-import butterknife.Unbinder
+import butterknife.*
 import pl.jmgarbowski.anycalc.R
-import pl.jmgarbowski.anycalc.feature.calc.evaluation.Calculator
 import pl.jmgarbowski.anycalc.feature.calc.mvp.CalcMVP
 import pl.jmgarbowski.anycalc.main.di.MainActivityInjector
 import javax.inject.Inject
@@ -17,6 +16,12 @@ class CalcFragment : Fragment(), CalcMVP.View {
 
     @Inject
     lateinit var presenter: CalcMVP.Presenter
+
+    @BindView(R.id.calc_display_equation)
+    lateinit var equationText: TextView
+
+    @BindView(R.id.calc_display_result)
+    lateinit var resultText: TextView
 
     private lateinit var unbinder: Unbinder
 
@@ -57,11 +62,55 @@ class CalcFragment : Fragment(), CalcMVP.View {
     }
 
     override fun displayEquation(equation: String) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        equationText.text = equation
     }
 
     override fun displayResult(result: String) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        resultText.text = result
+    }
+
+    @OnClick(
+        R.id.keypad_0, R.id.keypad_1, R.id.keypad_2, R.id.keypad_3,
+        R.id.keypad_4, R.id.keypad_5, R.id.keypad_6, R.id.keypad_7,
+        R.id.keypad_8, R.id.keypad_9, R.id.keypad_comma, R.id.keypad_plus,
+        R.id.keypad_minus, R.id.keypad_multiply, R.id.keypad_division,
+        R.id.keypad_left_p, R.id.keypad_right_p)
+    fun onKeypadClick(view: View) {
+        when(view.id) {
+            R.id.keypad_0 -> presenter.keyClick('0')
+            R.id.keypad_1 -> presenter.keyClick('1')
+            R.id.keypad_2 -> presenter.keyClick('2')
+            R.id.keypad_3 -> presenter.keyClick('3')
+            R.id.keypad_4 -> presenter.keyClick('4')
+            R.id.keypad_5 -> presenter.keyClick('5')
+            R.id.keypad_6 -> presenter.keyClick('6')
+            R.id.keypad_7 -> presenter.keyClick('7')
+            R.id.keypad_8 -> presenter.keyClick('8')
+            R.id.keypad_9 -> presenter.keyClick('9')
+            R.id.keypad_comma -> presenter.keyClick('.')
+            R.id.keypad_plus -> presenter.keyClick('+')
+            R.id.keypad_minus -> presenter.keyClick('-')
+            R.id.keypad_multiply -> presenter.keyClick('*')
+            R.id.keypad_division -> presenter.keyClick('/')
+            R.id.keypad_left_p -> presenter.keyClick('(')
+            R.id.keypad_right_p -> presenter.keyClick(')')
+        }
+    }
+
+    @OnClick(R.id.keypad_equal)
+    fun onEqualSignClick() {
+        presenter.equalSignClick()
+    }
+
+    @OnClick(R.id.keypad_e)
+    fun onKeypadEraseClick() {
+        presenter.eraseClick()
+    }
+
+    @OnLongClick(R.id.keypad_e)
+    fun onKeypadErasePress(): Boolean {
+        presenter.erasePress()
+        return true
     }
 
 }

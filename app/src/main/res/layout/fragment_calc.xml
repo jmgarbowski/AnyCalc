@@ -124,7 +124,7 @@
                 android:textSize="@dimen/calcDisplayResultTextSize"
                 android:textColor="@color/calcKeypadTextColor"
                 android:background="@drawable/calc_keypad_ripple_background"
-                app:layout_constraintTop_toBottomOf="@+id/keypad_c"
+                app:layout_constraintTop_toBottomOf="@+id/keypad_e"
                 app:layout_constraintBottom_toTopOf="@id/keypad_multiply"
                 app:layout_constraintLeft_toRightOf="@+id/keypad_9"
                 app:layout_constraintRight_toRightOf="parent"
@@ -132,7 +132,7 @@
                 app:layout_constraintVertical_chainStyle="spread"/>
 
         <Button
-                android:id="@+id/keypad_c"
+                android:id="@+id/keypad_e"
                 android:layout_width="@dimen/calcKeypadKeySize"
                 android:layout_height="@dimen/calcKeypadKeySize"
                 android:text="@string/calc_keypad_key_c"
