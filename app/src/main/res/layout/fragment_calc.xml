@@ -14,21 +14,23 @@
             android:background="@color/calcDisplayBackground"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintHeight_percent="0.30">
-            <TextView
+            <me.grantland.widget.AutofitTextView
                     android:id="@+id/calc_display_equation"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="@dimen/calcDisplayEquationRowHeight"
-                    android:gravity="center_vertical"
+                    android:gravity="center_vertical|end"
                     android:textColor="@color/calcDisplayEquationTextColor"
                     android:textSize="@dimen/calcDisplayEquationTextSize"
+                    android:maxLines="1"
                     tools:text="(2 + 3) x 2"/>
-            <TextView
+            <me.grantland.widget.AutofitTextView
                     android:id="@+id/calc_display_result"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="@dimen/calcDisplayResultRowHeight"
-                    android:gravity="center_vertical"
+                    android:gravity="center_vertical|end"
                     android:textColor="@color/calcDisplayResultTextColor"
                     android:textSize="@dimen/calcDisplayResultTextSize"
+                    android:maxLines="1"
                     tools:text="10"/>
     </LinearLayout>
     <androidx.constraintlayout.widget.ConstraintLayout

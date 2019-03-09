@@ -13,7 +13,7 @@ import javax.inject.Inject
 class CalcPresenter @Inject constructor(private val calculator: Calculator) : CalcMVP.Presenter {
 
     companion object {
-        private const val equationMaxLength: Int  = 16
+        private const val equationMaxLength: Int  = 32
         //operators and their alternatives
         private val operators: Array<Char> = arrayOf('+', '-', '*', '\u00D7', '/', '\u00F7')
     }
