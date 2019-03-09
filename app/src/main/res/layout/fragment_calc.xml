@@ -112,7 +112,7 @@
                 app:layout_constraintTop_toBottomOf="@id/keypad_right_p"
                 app:layout_constraintBottom_toTopOf="@id/keypad_6"
                 app:layout_constraintLeft_toRightOf="@+id/keypad_8"
-                app:layout_constraintRight_toLeftOf="@+id/keypad_c"
+                app:layout_constraintRight_toLeftOf="@+id/keypad_division"
                 app:layout_constraintHorizontal_chainStyle="spread"
                 app:layout_constraintVertical_chainStyle="spread"/>
         <Button
