@@ -49,6 +49,7 @@ class CalcPresenter @Inject constructor(private val calculator: Calculator) : Ca
                 if (equationSb.isEmpty()
                     || isLastItemComma()
                     || isLastItemOperator()
+                    || isLastItemParenthesis()
                     || commaLocked) return
                     equationSb.append(char)
                 commaLocked = true
@@ -59,7 +60,7 @@ class CalcPresenter @Inject constructor(private val calculator: Calculator) : Ca
         }
 
         view?.displayEquation(equationSb.toString())
-            .also { Timber.d("Equation: $equationSb.toString()") }
+            .also { Timber.d("Equation: $equationSb") }
     }
 
     override fun equalSignClick() {
@@ -104,6 +105,10 @@ class CalcPresenter @Inject constructor(private val calculator: Calculator) : Ca
         return char == '.'
     }
 
+    private fun isParenthesis(char: Char): Boolean {
+        return char == '(' || char == ')'
+    }
+
     private fun changeOperatorSymbol(char: Char): Char {
         return when (char) {
             '*' -> '\u00D7'
@@ -118,6 +123,10 @@ class CalcPresenter @Inject constructor(private val calculator: Calculator) : Ca
 
     private fun isLastItemComma(): Boolean {
         return (isComma(equationSb.elementAt(equationSb.length - 1)))
+    }
+
+    private fun isLastItemParenthesis(): Boolean {
+        return (isParenthesis(equationSb.elementAt(equationSb.length - 1)))
     }
 
     private fun removeLastItemOperator() {
