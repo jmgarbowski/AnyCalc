@@ -321,7 +321,7 @@
                 android:fontFamily="sans-serif-light"
                 android:textSize="@dimen/calcDisplayResultTextSize"
                 android:textColor="@color/calcKeypadTextColor"
-                android:background="@drawable/calc_keypad_result_background"
+                android:background="@drawable/calc_keypad_ripple_background_2"
                 app:layout_constraintTop_toBottomOf="@+id/keypad_minus"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toRightOf="@+id/keypad_plus"
