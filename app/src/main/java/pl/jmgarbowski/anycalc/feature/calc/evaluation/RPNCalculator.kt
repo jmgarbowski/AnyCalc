@@ -8,6 +8,6 @@ import javax.inject.Inject
 class RPNCalculator @Inject constructor() : Calculator {
     override fun evaluate(equation: String): String {
         //todo implement RPN algorithm
-        return ""
+        return "kurłaa +$equation"
     }
 }

@@ -1,5 +1,10 @@
 package pl.jmgarbowski.anycalc.feature.calc.mvp
 
+import com.jakewharton.rxrelay2.PublishRelay
+import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.rxkotlin.subscribeBy
+import io.reactivex.schedulers.Schedulers
 import pl.jmgarbowski.anycalc.feature.calc.evaluation.Calculator
 import timber.log.Timber
 import java.lang.StringBuilder
@@ -13,9 +18,19 @@ class CalcPresenter @Inject constructor(private val calculator: Calculator) : Ca
         private val operators: Array<Char> = arrayOf('+', '-', '*', '\u00D7', '/', '\u00F7')
     }
 
+    private val calculationRelay = PublishRelay.create<String>()
     private var view: CalcMVP.View? = null
     private var equationSb: StringBuilder = StringBuilder(equationMaxLength)
-    private var commaLocked: Boolean = false //helper flag to decide comma char should be added to builder
+    private var commaLocked: Boolean = false //helper flag to decide comma char should be append to builder
+
+    init {
+        observeAnswer()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeBy {
+                view?.displayResult(it)
+            }
+    }
 
     /**
      * CalcMVP.Presenter
@@ -48,7 +63,7 @@ class CalcPresenter @Inject constructor(private val calculator: Calculator) : Ca
     }
 
     override fun equalSignClick() {
-        view?.displayResult(calculator.evaluate(equationSb.toString()))
+        calculationRelay.accept(equationSb.toString())
     }
 
     override fun eraseClick() {
@@ -77,6 +92,9 @@ class CalcPresenter @Inject constructor(private val calculator: Calculator) : Ca
     override fun isViewBound(): Boolean {
         return this.view != null
     }
+
+    private fun observeAnswer(): Observable<String>
+            = calculationRelay.map { calculator.evaluate(it) }
 
     private fun isOperator(char: Char): Boolean {
         return operators.contains(char)

@@ -12,6 +12,7 @@ buildscript {
             'constraintLayout'   : '2.0.0-alpha3',
             'coreKtx'            : '1.0.0',
             'rxJava'             : '2.2.6',
+            'rxRelay'            : '2.1.0',
             'rxAndroid'          : '2.1.0',
             'rxKotlin'           : '2.3.0',
             'dagger2'            : '2.16',
