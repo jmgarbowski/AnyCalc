@@ -25,12 +25,14 @@ class CalcPresenter @Inject constructor(private val calculator: Calculator) : Ca
     private var view: CalcMVP.View? = null
     private var equationSb: StringBuilder = StringBuilder(equationMaxLength)
     private var commaLocked: Boolean = false //helper flag to decide comma char should be append to builder
+    private var lastResult: String? = null
 
     init {
         observeAnswer()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy {
+                lastResult = it
                 view?.displayResult(parseEquation(it))
             }
     }
@@ -40,6 +42,7 @@ class CalcPresenter @Inject constructor(private val calculator: Calculator) : Ca
      */
     override fun keyClick(char: Char) {
         if (equationSb.length == equationMaxLength) return
+        checkLastResult()
         when {
             isOperator(char) -> {
                 if (equationSb.isEmpty()
@@ -78,9 +81,7 @@ class CalcPresenter @Inject constructor(private val calculator: Calculator) : Ca
 
     //Clear all rows
     override fun erasePress() {
-        view?.displayEquation(equationSb.clear().toString())
-        view?.displayResult("")
-        commaLocked = false
+        clearRows()
     }
 
     /**
@@ -146,6 +147,20 @@ class CalcPresenter @Inject constructor(private val calculator: Calculator) : Ca
         if (equationSb.isNotEmpty()) {
             if (isLastItemComma()) commaLocked = false
             equationSb.deleteCharAt(equationSb.length - 1)
+        }
+    }
+
+    private fun clearRows() {
+        view?.displayEquation(equationSb.clear().toString())
+        view?.displayResult("")
+        lastResult = null
+        commaLocked = false
+    }
+
+    private fun checkLastResult() {
+        lastResult?.apply {
+            clearRows()
+            equationSb.append(this)
         }
     }
 
