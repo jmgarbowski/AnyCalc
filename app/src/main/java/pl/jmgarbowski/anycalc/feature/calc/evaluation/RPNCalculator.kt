@@ -12,8 +12,8 @@ class RPNCalculator @Inject constructor() : Calculator {
 
     companion object {
         //calc errors
-        private const val divideZeroError = "(Divide by zero!)"
-        private const val unsupportedEquation = "(Error)"
+        const val divideZeroError = "(Divide by zero!)"
+        const val unsupportedEquation = "(Error)"
     }
 
     override fun evaluate(input: String): String {
