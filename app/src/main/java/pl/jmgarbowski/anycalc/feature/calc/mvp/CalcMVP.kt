@@ -7,7 +7,6 @@ interface CalcMVP {
     interface View : BaseView {
         fun displayEquation(equation: String)
         fun displayResult(result: String)
-        fun displayError(error: String)
     }
     interface Presenter : BasePresenter<View> {
         fun keyClick(char: Char)

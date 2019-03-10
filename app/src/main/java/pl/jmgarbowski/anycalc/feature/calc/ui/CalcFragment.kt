@@ -32,8 +32,7 @@ class CalcFragment : Fragment(), CalcMVP.View {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.fragment_calc, container, false)
-        return view
+        return inflater.inflate(R.layout.fragment_calc, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -63,17 +62,9 @@ class CalcFragment : Fragment(), CalcMVP.View {
         super.onSaveInstanceState(outState)
     }
 
-    override fun displayEquation(equation: String) {
-        equationText.text = equation
-    }
+    override fun displayEquation(equation: String) { equationText.text = equation }
 
-    override fun displayResult(result: String) {
-        resultText.text = result
-    }
-
-    override fun displayError(error: String) {
-        resultText.text = error
-    }
+    override fun displayResult(result: String) { resultText.text = result }
 
     @OnClick(
         R.id.keypad_0, R.id.keypad_1, R.id.keypad_2, R.id.keypad_3,
@@ -105,14 +96,10 @@ class CalcFragment : Fragment(), CalcMVP.View {
     }
 
     @OnClick(R.id.keypad_equal)
-    fun onEqualSignClick() {
-        presenter.equalSignClick()
-    }
+    fun onEqualSignClick() { presenter.equalSignClick() }
 
     @OnClick(R.id.keypad_e)
-    fun onKeypadEraseClick() {
-        presenter.eraseClick()
-    }
+    fun onKeypadEraseClick() { presenter.eraseClick() }
 
     @OnLongClick(R.id.keypad_e)
     fun onKeypadErasePress(): Boolean {
