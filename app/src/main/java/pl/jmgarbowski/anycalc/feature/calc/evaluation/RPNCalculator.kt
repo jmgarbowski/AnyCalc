@@ -58,7 +58,8 @@ class RPNCalculator @Inject constructor() : Calculator {
             }
         }
 
-        return stack.peek()
+        return if (!stack.empty()) stack.peek()
+        else unsupportedEquation
     }
 
     private fun convertToPostfix(infixInput: String): ArrayList<String> {
@@ -66,21 +67,25 @@ class RPNCalculator @Inject constructor() : Calculator {
         //separate tokens according to operators
         val tokenizer = StringTokenizer(infixInput, Operator.toString(), true)
         var postfix = ""
-        while (tokenizer.hasMoreTokens()) {
-            val token = tokenizer.nextToken()
-            if( token == "+" || token == "*" || token == "-" || token == "/") {
-                while(!stack.empty() && priority(stack.peek()) >= priority(token))
-                    postfix += stack.pop()  + " "
-                stack.push(token)
+        try {
+            while (tokenizer.hasMoreTokens()) {
+                val token = tokenizer.nextToken()
+                if( token == "+" || token == "*" || token == "-" || token == "/") {
+                    while(!stack.empty() && priority(stack.peek()) >= priority(token))
+                        postfix += stack.pop()  + " "
+                    stack.push(token)
+                }
+                else if(token == "(") stack.push(token)
+                else if(token == ")") {
+                    while(stack.peek() != "(") postfix += stack.pop() + " "
+                    stack.pop()
+                }
+                else postfix += token  + " "
             }
-            else if(token == "(") stack.push(token)
-            else if(token == ")") {
-                while(stack.peek() != "(") postfix += stack.pop() + " "
-                stack.pop()
-            }
-            else postfix += token  + " "
+            while(!stack.empty()) postfix += stack.pop()  + " "
+        } catch (e: EmptyStackException) {
+            postfix = ""
         }
-        while(!stack.empty()) postfix += stack.pop()  + " "
 
         val num = ArrayList<String>(postfix.split(" "))
         num.removeAll(Collections.singleton(""))
