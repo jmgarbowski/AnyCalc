@@ -6,7 +6,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
 import pl.jmgarbowski.anycalc.feature.calc.evaluation.Calculator
-import timber.log.Timber
 import java.lang.StringBuilder
 import javax.inject.Inject
 
@@ -14,8 +13,19 @@ class CalcPresenter @Inject constructor(private val calculator: Calculator) : Ca
 
     companion object {
         private const val equationMaxLength: Int  = 32
+
+        private const val plus: Char = '+'
+        private const val minus: Char = '-'
+        private const val multiply: Char = '*'
+        private const val division: Char = '/'
         //operators and their alternatives
-        private val operators: Array<Char> = arrayOf('+', '-', '*', '\u00D7', '/', '\u00F7')
+        private val operators: HashMap<Char, Char>
+                = hashMapOf(
+                    Pair(plus, '\u002B'),
+                    Pair(minus, '\u2212'),
+                    Pair(multiply, '\u00D7'),
+                    Pair(division, '\u00F7')
+                )
     }
 
     private val calculationRelay = PublishRelay.create<String>()
@@ -28,7 +38,7 @@ class CalcPresenter @Inject constructor(private val calculator: Calculator) : Ca
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy {
-                view?.displayResult(it)
+                view?.displayResult(parseEquation(it))
             }
     }
 
@@ -42,7 +52,7 @@ class CalcPresenter @Inject constructor(private val calculator: Calculator) : Ca
                 if (equationSb.isEmpty()
                     || isLastItemComma()) return
                 if (isLastItemOperator()) removeLastItemOperator()
-                equationSb.append(changeOperatorSymbol(char))
+                equationSb.append(char)
                 commaLocked = false
             }
             isComma(char) -> {
@@ -59,8 +69,7 @@ class CalcPresenter @Inject constructor(private val calculator: Calculator) : Ca
             }
         }
 
-        view?.displayEquation(equationSb.toString())
-            .also { Timber.d("Equation: $equationSb") }
+        view?.displayEquation(parseEquation(equationSb.toString()))
     }
 
     override fun equalSignClick() {
@@ -69,7 +78,7 @@ class CalcPresenter @Inject constructor(private val calculator: Calculator) : Ca
 
     override fun eraseClick() {
         removeLastElement()
-        view?.displayEquation(equationSb.toString())
+        view?.displayEquation(parseEquation(equationSb.toString()))
     }
 
     //Clear all rows
@@ -109,14 +118,6 @@ class CalcPresenter @Inject constructor(private val calculator: Calculator) : Ca
         return char == '(' || char == ')'
     }
 
-    private fun changeOperatorSymbol(char: Char): Char {
-        return when (char) {
-            '*' -> '\u00D7'
-            '/' -> '\u00F7'
-            else -> char
-        }
-    }
-
     private fun isLastItemOperator(): Boolean {
         return (isOperator(equationSb.elementAt(equationSb.length - 1)))
     }
@@ -139,6 +140,17 @@ class CalcPresenter @Inject constructor(private val calculator: Calculator) : Ca
             if (isLastItemComma()) commaLocked = false
             equationSb.deleteCharAt(equationSb.length - 1)
         }
+    }
+
+    /**
+     * This function should be called every time when result row is updated
+     */
+    private fun parseEquation(equation: String): String {
+        return equation
+            .replace(plus, requireNotNull(operators[plus]))
+            .replace(minus, requireNotNull(operators[minus]))
+            .replace(multiply, requireNotNull(operators[multiply]))
+            .replace(division, requireNotNull(operators[division]))
     }
 
 }

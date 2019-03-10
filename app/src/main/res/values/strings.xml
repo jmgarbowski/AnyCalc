@@ -13,8 +13,8 @@
     <string name="calc_keypad_key_9">9</string>
     <string name="calc_keypad_key_0">0</string>
     <string name="calc_keypad_key_comma">.</string>
-    <string name="calc_keypad_key_plus">+</string>
-    <string name="calc_keypad_key_minus">-</string>
+    <string name="calc_keypad_key_plus">\u002B</string>
+    <string name="calc_keypad_key_minus">\u2212</string>
     <string name="calc_keypad_key_result">=</string>
     <string name="calc_keypad_key_left_parenthesis">(</string>
     <string name="calc_keypad_key_right_parenthesis">)</string>
