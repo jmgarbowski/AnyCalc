@@ -6,6 +6,12 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
 import pl.jmgarbowski.anycalc.feature.calc.evaluation.Calculator
+import pl.jmgarbowski.anycalc.feature.calc.evaluation.Operator.Companion.division
+import pl.jmgarbowski.anycalc.feature.calc.evaluation.Operator.Companion.isOperator
+import pl.jmgarbowski.anycalc.feature.calc.evaluation.Operator.Companion.minus
+import pl.jmgarbowski.anycalc.feature.calc.evaluation.Operator.Companion.multiply
+import pl.jmgarbowski.anycalc.feature.calc.evaluation.Operator.Companion.unicode
+import pl.jmgarbowski.anycalc.feature.calc.evaluation.Operator.Companion.plus
 import java.lang.StringBuilder
 import javax.inject.Inject
 
@@ -13,19 +19,6 @@ class CalcPresenter @Inject constructor(private val calculator: Calculator) : Ca
 
     companion object {
         private const val equationMaxLength: Int  = 32
-
-        private const val plus: Char = '+'
-        private const val minus: Char = '-'
-        private const val multiply: Char = '*'
-        private const val division: Char = '/'
-        //operators and their alternatives
-        private val operators: HashMap<Char, Char>
-                = hashMapOf(
-                    Pair(plus, '\u002B'),
-                    Pair(minus, '\u2212'),
-                    Pair(multiply, '\u00D7'),
-                    Pair(division, '\u00F7')
-                )
     }
 
     private val calculationRelay = PublishRelay.create<String>()
@@ -50,7 +43,8 @@ class CalcPresenter @Inject constructor(private val calculator: Calculator) : Ca
         when {
             isOperator(char) -> {
                 if (equationSb.isEmpty()
-                    || isLastItemComma()) return
+                    || isLastItemComma()
+                    || isLastItemLeftParenthesis()) return
                 if (isLastItemOperator()) removeLastItemOperator()
                 equationSb.append(char)
                 commaLocked = false
@@ -73,7 +67,8 @@ class CalcPresenter @Inject constructor(private val calculator: Calculator) : Ca
     }
 
     override fun equalSignClick() {
-        calculationRelay.accept(equationSb.toString())
+        if (equationSb.isNotEmpty())
+            calculationRelay.accept(equationSb.toString())
     }
 
     override fun eraseClick() {
@@ -106,16 +101,20 @@ class CalcPresenter @Inject constructor(private val calculator: Calculator) : Ca
     private fun observeAnswer(): Observable<String>
             = calculationRelay.map { calculator.evaluate(it) }
 
-    private fun isOperator(char: Char): Boolean {
-        return operators.contains(char)
-    }
-
     private fun isComma(char: Char): Boolean {
         return char == '.'
     }
 
     private fun isParenthesis(char: Char): Boolean {
         return char == '(' || char == ')'
+    }
+
+    private fun isLeftParenthesis(char: Char): Boolean {
+        return char == '('
+    }
+
+    private fun isRightParenthesis(char: Char): Boolean {
+        return char == ')'
     }
 
     private fun isLastItemOperator(): Boolean {
@@ -128,6 +127,14 @@ class CalcPresenter @Inject constructor(private val calculator: Calculator) : Ca
 
     private fun isLastItemParenthesis(): Boolean {
         return (isParenthesis(equationSb.elementAt(equationSb.length - 1)))
+    }
+
+    private fun isLastItemLeftParenthesis(): Boolean {
+        return (isLeftParenthesis(equationSb.elementAt(equationSb.length - 1)))
+    }
+
+    private fun isLastItemRightParenthesis(): Boolean {
+        return (isRightParenthesis(equationSb.elementAt(equationSb.length - 1)))
     }
 
     private fun removeLastItemOperator() {
@@ -147,10 +154,10 @@ class CalcPresenter @Inject constructor(private val calculator: Calculator) : Ca
      */
     private fun parseEquation(equation: String): String {
         return equation
-            .replace(plus, requireNotNull(operators[plus]))
-            .replace(minus, requireNotNull(operators[minus]))
-            .replace(multiply, requireNotNull(operators[multiply]))
-            .replace(division, requireNotNull(operators[division]))
+            .replace(plus, requireNotNull(unicode[plus]))
+            .replace(minus, requireNotNull(unicode[minus]))
+            .replace(multiply, requireNotNull(unicode[multiply]))
+            .replace(division, requireNotNull(unicode[division]))
     }
 
 }
