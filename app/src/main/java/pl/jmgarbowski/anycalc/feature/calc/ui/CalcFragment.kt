@@ -44,15 +44,13 @@ class CalcFragment : Fragment(), CalcMVP.View {
 
     override fun onStart() {
         super.onStart()
-        if (!presenter.isViewBound()) {
+        if (!presenter.isViewBound())
             presenter.bind(this)
-        }
     }
 
     override fun onDestroyView() {
-        if (presenter.isViewBound()) {
+        if (presenter.isViewBound())
             presenter.unbind()
-        }
         super.onDestroyView()
         unbinder.unbind()
     }
