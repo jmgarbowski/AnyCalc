@@ -34,6 +34,7 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
     //Android Support
+    //known bug with androidx: https://issuetracker.google.com/issues/120750246
     implementation "androidx.core:core-ktx:${versions.androidx}"
     implementation "androidx.constraintlayout:constraintlayout:${versions.constraintLayout}"
     implementation "com.google.android.material:material:${versions.material}"
