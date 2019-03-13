@@ -70,17 +70,19 @@ class RPNCalculator @Inject constructor() : Calculator {
         try {
             while (tokenizer.hasMoreTokens()) {
                 val token = tokenizer.nextToken()
-                if( token == "+" || token == "*" || token == "-" || token == "/") {
-                    while(!stack.empty() && priority(stack.peek()) >= priority(token))
-                        postfix += stack.pop()  + " "
-                    stack.push(token)
+                when (token) {
+                    "+", "*", "-", "/" -> {
+                        while(!stack.empty() && priority(stack.peek()) >= priority(token))
+                            postfix += stack.pop()  + " "
+                        stack.push(token)
+                    }
+                    "(" -> stack.push(token)
+                    ")" -> {
+                        while(stack.peek() != "(") postfix += stack.pop() + " "
+                        stack.pop()
+                    }
+                    else -> postfix += token  + " "
                 }
-                else if(token == "(") stack.push(token)
-                else if(token == ")") {
-                    while(stack.peek() != "(") postfix += stack.pop() + " "
-                    stack.pop()
-                }
-                else postfix += token  + " "
             }
             while(!stack.empty()) postfix += stack.pop()  + " "
         } catch (e: EmptyStackException) {

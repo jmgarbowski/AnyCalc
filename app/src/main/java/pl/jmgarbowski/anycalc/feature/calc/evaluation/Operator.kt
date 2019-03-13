@@ -13,18 +13,18 @@ class Operator {
         //operators and their unicode
         val unicode: HashMap<Char, Char>
                 = hashMapOf(
-                    Pair(plus, '\u002B'),
-                    Pair(minus, '\u2212'),
-                    Pair(multiply, '\u00D7'),
-                    Pair(division, '\u00F7')
+                    plus to '\u002B',
+                    minus to '\u2212',
+                    multiply to '\u00D7',
+                    division to '\u00F7'
                 )
 
         private val priority: HashMap<Char, Int>
                 = hashMapOf(
-                    Pair(plus, 1),
-                    Pair(minus, 1),
-                    Pair(multiply, 2),
-                    Pair(division, 2)
+                    plus to 1,
+                    minus to 1,
+                    multiply to 2,
+                    division to 2
                 )
 
         /**

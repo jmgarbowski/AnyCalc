@@ -6,6 +6,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
 import pl.jmgarbowski.anycalc.feature.calc.evaluation.Calculator
+import pl.jmgarbowski.anycalc.feature.calc.evaluation.Operator
 import pl.jmgarbowski.anycalc.feature.calc.evaluation.Operator.Companion.division
 import pl.jmgarbowski.anycalc.feature.calc.evaluation.Operator.Companion.isOperator
 import pl.jmgarbowski.anycalc.feature.calc.evaluation.Operator.Companion.minus
@@ -42,9 +43,9 @@ class CalcPresenter @Inject constructor(private val calculator: Calculator) : Ca
      */
     override fun keyClick(char: Char) {
         if (equationSb.length == equationMaxLength) return
-        checkLastResult()
         when {
             isOperator(char) -> {
+                checkLastResult()
                 if (equationSb.isEmpty()
                     || isLastItemComma()
                     || isLastItemLeftParenthesis()) return
@@ -62,6 +63,9 @@ class CalcPresenter @Inject constructor(private val calculator: Calculator) : Ca
                 commaLocked = true
             }
             else -> {
+                lastResult?.apply {
+                    clearRows()
+                }
                 equationSb.append(char)
             }
         }
@@ -102,41 +106,23 @@ class CalcPresenter @Inject constructor(private val calculator: Calculator) : Ca
     private fun observeAnswer(): Observable<String>
             = calculationRelay.map { calculator.evaluate(it) }
 
-    private fun isComma(char: Char): Boolean {
-        return char == '.'
-    }
+    private fun isComma(char: Char): Boolean = char == Operator.comma
 
-    private fun isParenthesis(char: Char): Boolean {
-        return char == '(' || char == ')'
-    }
+    private fun isParenthesis(char: Char): Boolean = char == Operator.leftParenthesis || char == Operator.rightParenthesis
 
-    private fun isLeftParenthesis(char: Char): Boolean {
-        return char == '('
-    }
+    private fun isLeftParenthesis(char: Char): Boolean = char == Operator.leftParenthesis
 
-    private fun isRightParenthesis(char: Char): Boolean {
-        return char == ')'
-    }
+    private fun isRightParenthesis(char: Char): Boolean = char == Operator.rightParenthesis
 
-    private fun isLastItemOperator(): Boolean {
-        return (isOperator(equationSb.elementAt(equationSb.length - 1)))
-    }
+    private fun isLastItemOperator(): Boolean = (isOperator(equationSb.elementAt(equationSb.length - 1)))
 
-    private fun isLastItemComma(): Boolean {
-        return (isComma(equationSb.elementAt(equationSb.length - 1)))
-    }
+    private fun isLastItemComma(): Boolean = (isComma(equationSb.elementAt(equationSb.length - 1)))
 
-    private fun isLastItemParenthesis(): Boolean {
-        return (isParenthesis(equationSb.elementAt(equationSb.length - 1)))
-    }
+    private fun isLastItemParenthesis(): Boolean = (isParenthesis(equationSb.elementAt(equationSb.length - 1)))
 
-    private fun isLastItemLeftParenthesis(): Boolean {
-        return (isLeftParenthesis(equationSb.elementAt(equationSb.length - 1)))
-    }
+    private fun isLastItemLeftParenthesis(): Boolean = (isLeftParenthesis(equationSb.elementAt(equationSb.length - 1)))
 
-    private fun isLastItemRightParenthesis(): Boolean {
-        return (isRightParenthesis(equationSb.elementAt(equationSb.length - 1)))
-    }
+    private fun isLastItemRightParenthesis(): Boolean = isRightParenthesis(equationSb.elementAt(equationSb.length - 1))
 
     private fun removeLastItemOperator() {
         if (equationSb.isNotEmpty())
