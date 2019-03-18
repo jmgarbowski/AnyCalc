@@ -3,6 +3,8 @@ package pl.jmgarbowski.anycalc.feature.calc.mvp
 import com.jakewharton.rxrelay2.PublishRelay
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
 import pl.jmgarbowski.anycalc.feature.calc.evaluation.Calculator
@@ -26,27 +28,11 @@ class CalcPresenter @Inject constructor(private val calculator: Calculator) : Ca
     }
 
     private val calculationRelay = PublishRelay.create<String>()
+    private val compositeDisposable = CompositeDisposable()
     private var view: CalcMVP.View? = null
     private var equationSb: StringBuilder = StringBuilder(equationMaxLength)
     private var commaLocked: Boolean = false //helper flag to decide comma char should be append to builder
     private var lastResult: Result? = null
-
-    init {
-        observeAnswer()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribeBy {
-                lastResult = it
-                when (it) {
-                    is Success -> {
-                        view?.displayResult(it.resultMessage)
-                    }
-                    is Error -> {
-                        view?.displayError(it.errorMessage)
-                    }
-                }
-            }
-    }
 
     /**
      * CalcMVP.Presenter
@@ -94,10 +80,25 @@ class CalcPresenter @Inject constructor(private val calculator: Calculator) : Ca
      */
     override fun bind(view: CalcMVP.View) {
         this.view = view
+        compositeDisposable += observeAnswer()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeBy {
+                lastResult = it
+                when (it) {
+                    is Success -> {
+                        view.displayResult(it.resultMessage)
+                    }
+                    is Error -> {
+                        view.displayError(it.errorMessage)
+                    }
+                }
+            }
     }
 
     override fun unbind() {
         this.view = null
+        compositeDisposable.clear()
     }
 
     private fun observeAnswer(): Observable<Result> = calculationRelay.map { calculator.evaluate(it) }
