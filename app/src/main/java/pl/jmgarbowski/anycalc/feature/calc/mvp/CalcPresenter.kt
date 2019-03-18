@@ -6,6 +6,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
 import pl.jmgarbowski.anycalc.feature.calc.evaluation.Calculator
+import pl.jmgarbowski.anycalc.feature.calc.evaluation.Error
 import pl.jmgarbowski.anycalc.feature.calc.evaluation.Operator
 import pl.jmgarbowski.anycalc.feature.calc.evaluation.Operator.Companion.division
 import pl.jmgarbowski.anycalc.feature.calc.evaluation.Operator.Companion.isOperator
@@ -13,6 +14,8 @@ import pl.jmgarbowski.anycalc.feature.calc.evaluation.Operator.Companion.minus
 import pl.jmgarbowski.anycalc.feature.calc.evaluation.Operator.Companion.multiply
 import pl.jmgarbowski.anycalc.feature.calc.evaluation.Operator.Companion.unicode
 import pl.jmgarbowski.anycalc.feature.calc.evaluation.Operator.Companion.plus
+import pl.jmgarbowski.anycalc.feature.calc.evaluation.Result
+import pl.jmgarbowski.anycalc.feature.calc.evaluation.Success
 import java.lang.StringBuilder
 import javax.inject.Inject
 
@@ -26,7 +29,7 @@ class CalcPresenter @Inject constructor(private val calculator: Calculator) : Ca
     private var view: CalcMVP.View? = null
     private var equationSb: StringBuilder = StringBuilder(equationMaxLength)
     private var commaLocked: Boolean = false //helper flag to decide comma char should be append to builder
-    private var lastResult: String? = null
+    private var lastResult: Result? = null
 
     init {
         observeAnswer()
@@ -34,7 +37,10 @@ class CalcPresenter @Inject constructor(private val calculator: Calculator) : Ca
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy {
                 lastResult = it
-                view?.displayResult(parseEquation(it))
+                when(it) {
+                    is Success -> { view?.displayResult(it.resultMessage) }
+                    is Error -> { view?.displayError(it.errorMessage) }
+                }
             }
     }
 
@@ -45,7 +51,7 @@ class CalcPresenter @Inject constructor(private val calculator: Calculator) : Ca
         if (equationSb.length == equationMaxLength) return
         when {
             isOperator(char) -> {
-                checkLastResult()
+                appendLastResult()
                 if (equationSb.isEmpty()
                     || isLastItemComma()
                     || isLastItemLeftParenthesis()) return
@@ -63,9 +69,7 @@ class CalcPresenter @Inject constructor(private val calculator: Calculator) : Ca
                 commaLocked = true
             }
             else -> {
-                lastResult?.apply {
-                    clearRows()
-                }
+                removeLastResult()
                 equationSb.append(char)
             }
         }
@@ -99,12 +103,7 @@ class CalcPresenter @Inject constructor(private val calculator: Calculator) : Ca
         this.view = null
     }
 
-    override fun isViewBound(): Boolean {
-        return this.view != null
-    }
-
-    private fun observeAnswer(): Observable<String>
-            = calculationRelay.map { calculator.evaluate(it) }
+    private fun observeAnswer(): Observable<Result> = calculationRelay.map { calculator.evaluate(it) }
 
     private fun isComma(char: Char): Boolean = char == Operator.comma
 
@@ -139,15 +138,22 @@ class CalcPresenter @Inject constructor(private val calculator: Calculator) : Ca
     private fun clearRows() {
         view?.displayEquation(equationSb.clear().toString())
         view?.displayResult("")
-        lastResult = null
         commaLocked = false
     }
 
-    private fun checkLastResult() {
+    private fun appendLastResult() {
         lastResult?.apply {
             clearRows()
-            equationSb.append(this)
+            when (this) {
+                is Success -> equationSb.append(resultMessage)
+            }
         }
+        lastResult = null
+    }
+
+    private fun removeLastResult() {
+        lastResult?.apply { clearRows() }
+        lastResult = null
     }
 
     /**

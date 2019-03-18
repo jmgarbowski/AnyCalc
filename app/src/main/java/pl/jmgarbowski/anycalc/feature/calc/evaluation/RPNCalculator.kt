@@ -12,7 +12,7 @@ import kotlin.collections.ArrayList
  */
 class RPNCalculator @Inject constructor(private val context: Context) : Calculator {
 
-    override fun evaluate(input: String): String {
+    override fun evaluate(input: String): Result {
 
         val stack: Stack<String> = Stack()
         val postfixEquation: Queue<String> = LinkedList<String>()
@@ -40,7 +40,7 @@ class RPNCalculator @Inject constructor(private val context: Context) : Calculat
                         Operator.multiply.toString() -> result = nextNumber * firstNumber
                         Operator.division.toString() -> {
                             if (firstNumber == 0.0) {
-                                return context.getString(R.string.rpn_divide_by_zero)
+                                return Error(context.getString(R.string.rpn_divide_by_zero))
                             } else {
                                 result = nextNumber / firstNumber
                             }
@@ -48,14 +48,14 @@ class RPNCalculator @Inject constructor(private val context: Context) : Calculat
                     }
                     stack.push(result.toString())
                 } catch (e: EmptyStackException) {
-                    return context.getString(R.string.rpn_unsupported_error)
+                    return Error(context.getString(R.string.rpn_unsupported_error))
                 }
 
             }
         }
 
-        return if (!stack.empty()) stack.peek()
-        else context.getString(R.string.rpn_unsupported_error)
+        return if (!stack.empty()) Success(stack.peek())
+        else Error(context.getString(R.string.rpn_unsupported_error))
     }
 
     private fun convertToPostfix(infixInput: String): ArrayList<String> {
