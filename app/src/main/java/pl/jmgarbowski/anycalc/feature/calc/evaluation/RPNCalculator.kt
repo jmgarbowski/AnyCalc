@@ -53,11 +53,8 @@ class RPNCalculator @Inject constructor(private val context: Context) : Calculat
                             }
                         }
                     }
-                    if (result % 1 == 0.0) {
-                        stack.push(result.toInt().toString())
-                    } else {
-                        stack.push(result.toString())
-                    }
+                    val number = if (result % 1 == 0.0) result.toInt().toString() else result.toString()
+                    stack.push(number)
                 } catch (e: EmptyStackException) {
                     return Error(context.getString(R.string.rpn_unsupported_error))
                 }
