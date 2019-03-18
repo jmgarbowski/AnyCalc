@@ -30,13 +30,13 @@ class Operator {
         /**
          * Return priority of operator, value range 0..2
          */
-        fun getPriority(operator: Char): Int? = priority[operator]
+        fun getPriority(operator: Char): Int = priority[operator] ?: 0
 
         /**
          * Return priority of operator, value range 0..2
          * Throws exception when string is longer than 1 or is empty
          */
-        fun getPriority(operator: String): Int? = priority[operator.single()]
+        fun getPriority(operator: String): Int = priority[operator.single()] ?: 0
 
         /**
          * Return true if char is operator

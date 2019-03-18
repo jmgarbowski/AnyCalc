@@ -28,6 +28,12 @@ class CalcFragment : Fragment(), CalcMVP.View {
     @BindView(R.id.calc_display_result)
     lateinit var resultText: TextView
 
+    private fun inject() {
+        MainActivityInjector.get(requireContext()).mainActivityComponent
+            .calcFragmentComponent()
+            .inject(this)
+    }
+
     private val resultSpan by lazy {
         ForegroundColorSpan(
             ContextCompat.getColor(requireContext(), R.color.calcDisplayResultTextColor)
@@ -127,10 +133,4 @@ class CalcFragment : Fragment(), CalcMVP.View {
         return true
     }
 
-}
-
-fun CalcFragment.inject() {
-    MainActivityInjector.get(requireContext()).mainActivityComponent
-        .calcFragmentComponent()
-        .inject(this)
 }

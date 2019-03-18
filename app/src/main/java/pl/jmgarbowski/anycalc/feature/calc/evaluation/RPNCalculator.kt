@@ -2,6 +2,13 @@ package pl.jmgarbowski.anycalc.feature.calc.evaluation
 
 import android.content.Context
 import pl.jmgarbowski.anycalc.R
+import pl.jmgarbowski.anycalc.feature.calc.evaluation.Operator.Companion.division
+import pl.jmgarbowski.anycalc.feature.calc.evaluation.Operator.Companion.getPriority
+import pl.jmgarbowski.anycalc.feature.calc.evaluation.Operator.Companion.leftParenthesis
+import pl.jmgarbowski.anycalc.feature.calc.evaluation.Operator.Companion.minus
+import pl.jmgarbowski.anycalc.feature.calc.evaluation.Operator.Companion.multiply
+import pl.jmgarbowski.anycalc.feature.calc.evaluation.Operator.Companion.plus
+import pl.jmgarbowski.anycalc.feature.calc.evaluation.Operator.Companion.rightParenthesis
 import java.lang.NumberFormatException
 import java.util.*
 import javax.inject.Inject
@@ -63,20 +70,26 @@ class RPNCalculator @Inject constructor(private val context: Context) : Calculat
         //separate tokens according to operators
         val tokenizer = StringTokenizer(infixInput, Operator.toString(), true)
         var postfix = ""
+
+        fun checkStackPriorityAndPush(token: String) {
+            while (!stack.empty() && getPriority(stack.peek()) >= getPriority(token)) {
+                postfix += stack.pop()  + " "
+            }
+            stack.push(token)
+        }
+
+        fun getFromStackUntilLeftParenthesis() {
+            while (stack.peek() != "(") postfix += stack.pop() + " "
+            stack.pop()
+        }
+
         try {
             while (tokenizer.hasMoreTokens()) {
                 val token = tokenizer.nextToken()
                 when (token) {
-                    "+", "*", "-", "/" -> {
-                        while(!stack.empty() && priority(stack.peek()) >= priority(token))
-                            postfix += stack.pop()  + " "
-                        stack.push(token)
-                    }
+                    "+", "*", "-", "/" -> checkStackPriorityAndPush(token)
                     "(" -> stack.push(token)
-                    ")" -> {
-                        while(stack.peek() != "(") postfix += stack.pop() + " "
-                        stack.pop()
-                    }
+                    ")" -> getFromStackUntilLeftParenthesis()
                     else -> postfix += token  + " "
                 }
             }
@@ -89,14 +102,6 @@ class RPNCalculator @Inject constructor(private val context: Context) : Calculat
         num.removeAll(Collections.singleton(""))
 
         return num
-    }
-
-    private fun priority(operator: String): Int {
-        return when(operator) {
-            "+", "-" -> 1
-            "*", "/" -> 2
-            else -> 0
-        }
     }
 
 }
