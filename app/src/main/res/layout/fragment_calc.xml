@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:orientation="vertical"
         xmlns:app="http://schemas.android.com/apk/res-auto">
     <LinearLayout
             android:id="@+id/calc_display"
@@ -12,8 +14,7 @@
             android:orientation="vertical"
             android:gravity="bottom|end"
             android:background="@color/calcDisplayBackground"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintHeight_percent="0.30">
+            android:layout_weight="0.30">
             <me.grantland.widget.AutofitTextView
                     android:id="@+id/calc_display_equation"
                     android:layout_width="match_parent"
@@ -39,8 +40,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:padding="@dimen/calcScreenPadding"
-            app:layout_constraintTop_toBottomOf="@id/calc_display"
-            app:layout_constraintHeight_percent="0.70">
+            android:layout_weight="0.70">
         <Button
                 android:id="@+id/keypad_left_p"
                 android:layout_width="@dimen/calcKeypadKeySize"
@@ -331,6 +331,5 @@
                 app:layout_constraintHorizontal_chainStyle="spread"
                 app:layout_constraintVertical_chainStyle="spread"/>
 
-
     </androidx.constraintlayout.widget.ConstraintLayout>
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>
