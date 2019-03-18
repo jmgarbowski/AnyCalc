@@ -131,6 +131,7 @@ class CalcPresenter @Inject constructor(private val calculator: Calculator) : Ca
             if (isLastItemComma()) commaLocked = false
             equationSb.deleteCharAt(equationSb.length - 1)
         }
+        lastResult = null
     }
 
     private fun clearRows() {
