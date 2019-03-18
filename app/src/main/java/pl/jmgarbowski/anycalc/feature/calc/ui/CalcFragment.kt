@@ -1,10 +1,14 @@
 package pl.jmgarbowski.anycalc.feature.calc.ui
 
 import android.os.Bundle
+import android.text.SpannableStringBuilder
+import android.text.Spanned
+import android.text.style.ForegroundColorSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import butterknife.*
 import pl.jmgarbowski.anycalc.R
@@ -24,6 +28,22 @@ class CalcFragment : Fragment(), CalcMVP.View {
     @BindView(R.id.calc_display_result)
     lateinit var resultText: TextView
 
+    private fun inject() {
+        MainActivityInjector.get(requireContext()).mainActivityComponent
+            .calcFragmentComponent()
+            .inject(this)
+    }
+
+    private val resultSpan by lazy {
+        ForegroundColorSpan(
+            ContextCompat.getColor(requireContext(), R.color.calcDisplayResultTextColor)
+        )
+    }
+    private val errorSpan by lazy {
+        ForegroundColorSpan(
+            ContextCompat.getColor(requireContext(), R.color.calcDisplayErrorTextColor)
+        )
+    }
     private lateinit var unbinder: Unbinder
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,13 +64,11 @@ class CalcFragment : Fragment(), CalcMVP.View {
 
     override fun onStart() {
         super.onStart()
-        if (!presenter.isViewBound())
-            presenter.bind(this)
+        presenter.bind(this)
     }
 
     override fun onDestroyView() {
-        if (presenter.isViewBound())
-            presenter.unbind()
+        presenter.unbind()
         super.onDestroyView()
         unbinder.unbind()
     }
@@ -62,7 +80,17 @@ class CalcFragment : Fragment(), CalcMVP.View {
 
     override fun displayEquation(equation: String) { equationText.text = equation }
 
-    override fun displayResult(result: String) { resultText.text = result }
+    override fun displayResult(result: String) {
+        val spannedResult = SpannableStringBuilder(result)
+        spannedResult.setSpan(resultSpan, 0, result.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+        resultText.text = spannedResult
+    }
+
+    override fun displayError(error: String) {
+        val spannedError = SpannableStringBuilder(error)
+        spannedError.setSpan(errorSpan, 0, error.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+        resultText.text = spannedError
+    }
 
     @OnClick(
         R.id.keypad_0, R.id.keypad_1, R.id.keypad_2, R.id.keypad_3,
@@ -105,10 +133,4 @@ class CalcFragment : Fragment(), CalcMVP.View {
         return true
     }
 
-}
-
-fun CalcFragment.inject() {
-    MainActivityInjector.get(requireContext()).mainActivityComponent
-        .calcFragmentComponent()
-        .inject(this)
 }
