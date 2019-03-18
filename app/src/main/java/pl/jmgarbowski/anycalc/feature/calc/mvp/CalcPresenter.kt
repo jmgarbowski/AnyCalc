@@ -62,9 +62,9 @@ class CalcPresenter @Inject constructor(private val calculator: Calculator) : Ca
                 commaLocked = false
             }
             isComma(char) -> {
-                if (equationSb.isEmpty() || isLastItemComma() || isLastItemOperator()
-                    || isLastItemParenthesis() || commaLocked
-                ) return
+                if (equationSb.isEmpty() || isLastItemComma() || isLastItemOperator() || isLastItemParenthesis() || commaLocked) {
+                    return
+                }
                 equationSb.append(char)
                 commaLocked = true
             }
@@ -78,8 +78,7 @@ class CalcPresenter @Inject constructor(private val calculator: Calculator) : Ca
     }
 
     override fun equalSignClick() {
-        if (equationSb.isNotEmpty())
-            calculationRelay.accept(equationSb.toString())
+        if (equationSb.isNotEmpty()) calculationRelay.accept(equationSb.toString())
     }
 
     override fun eraseClick() {
@@ -123,8 +122,7 @@ class CalcPresenter @Inject constructor(private val calculator: Calculator) : Ca
     private fun isLastItemRightParenthesis(): Boolean = isRightParenthesis(equationSb.elementAt(equationSb.length - 1))
 
     private fun removeLastItemOperator() {
-        if (equationSb.isNotEmpty())
-            equationSb.deleteCharAt(equationSb.length - 1)
+        if (equationSb.isNotEmpty()) equationSb.deleteCharAt(equationSb.length - 1)
     }
 
     private fun removeLastElement() {
