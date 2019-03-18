@@ -2,11 +2,14 @@ package pl.jmgarbowski.anycalc.feature.calc.mvp
 
 import com.jakewharton.rxrelay2.PublishRelay
 import io.reactivex.Observable
+import io.reactivex.Scheduler
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
+import pl.jmgarbowski.anycalc.base.di.qualifier.IOThreadScheduler
+import pl.jmgarbowski.anycalc.base.di.qualifier.MainThreadScheduler
 import pl.jmgarbowski.anycalc.feature.calc.evaluation.Calculator
 import pl.jmgarbowski.anycalc.feature.calc.evaluation.Error
 import pl.jmgarbowski.anycalc.feature.calc.evaluation.Operator
@@ -21,7 +24,11 @@ import pl.jmgarbowski.anycalc.feature.calc.evaluation.Success
 import java.lang.StringBuilder
 import javax.inject.Inject
 
-class CalcPresenter @Inject constructor(private val calculator: Calculator) : CalcMVP.Presenter {
+class CalcPresenter @Inject constructor(
+    private val calculator: Calculator,
+    @MainThreadScheduler private val mainThreadScheduler: Scheduler,
+    @IOThreadScheduler private val ioThreadScheduler: Scheduler
+    ) : CalcMVP.Presenter {
 
     companion object {
         private const val equationMaxLength: Int = 32
@@ -81,8 +88,8 @@ class CalcPresenter @Inject constructor(private val calculator: Calculator) : Ca
     override fun bind(view: CalcMVP.View) {
         this.view = view
         compositeDisposable += observeAnswer()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeOn(ioThreadScheduler)
+            .observeOn(mainThreadScheduler)
             .subscribeBy {
                 lastResult = it
                 when (it) {
