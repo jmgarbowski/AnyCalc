@@ -22,7 +22,7 @@ import javax.inject.Inject
 class CalcPresenter @Inject constructor(private val calculator: Calculator) : CalcMVP.Presenter {
 
     companion object {
-        private const val equationMaxLength: Int  = 32
+        private const val equationMaxLength: Int = 32
     }
 
     private val calculationRelay = PublishRelay.create<String>()
@@ -37,9 +37,13 @@ class CalcPresenter @Inject constructor(private val calculator: Calculator) : Ca
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy {
                 lastResult = it
-                when(it) {
-                    is Success -> { view?.displayResult(it.resultMessage) }
-                    is Error -> { view?.displayError(it.errorMessage) }
+                when (it) {
+                    is Success -> {
+                        view?.displayResult(it.resultMessage)
+                    }
+                    is Error -> {
+                        view?.displayError(it.errorMessage)
+                    }
                 }
             }
     }
@@ -52,20 +56,16 @@ class CalcPresenter @Inject constructor(private val calculator: Calculator) : Ca
         when {
             isOperator(char) -> {
                 appendLastResult()
-                if (equationSb.isEmpty()
-                    || isLastItemComma()
-                    || isLastItemLeftParenthesis()) return
+                if (equationSb.isEmpty() || isLastItemComma() || isLastItemLeftParenthesis()) return
                 if (isLastItemOperator()) removeLastItemOperator()
                 equationSb.append(char)
                 commaLocked = false
             }
             isComma(char) -> {
-                if (equationSb.isEmpty()
-                    || isLastItemComma()
-                    || isLastItemOperator()
-                    || isLastItemParenthesis()
-                    || commaLocked) return
-                    equationSb.append(char)
+                if (equationSb.isEmpty() || isLastItemComma() || isLastItemOperator()
+                    || isLastItemParenthesis() || commaLocked
+                ) return
+                equationSb.append(char)
                 commaLocked = true
             }
             else -> {
@@ -88,9 +88,7 @@ class CalcPresenter @Inject constructor(private val calculator: Calculator) : Ca
     }
 
     //Clear all rows
-    override fun erasePress() {
-        clearRows()
-    }
+    override fun erasePress() = clearRows()
 
     /**
      * BasePresenter
@@ -107,7 +105,8 @@ class CalcPresenter @Inject constructor(private val calculator: Calculator) : Ca
 
     private fun isComma(char: Char): Boolean = char == Operator.comma
 
-    private fun isParenthesis(char: Char): Boolean = char == Operator.leftParenthesis || char == Operator.rightParenthesis
+    private fun isParenthesis(char: Char): Boolean =
+        char == Operator.leftParenthesis || char == Operator.rightParenthesis
 
     private fun isLeftParenthesis(char: Char): Boolean = char == Operator.leftParenthesis
 
