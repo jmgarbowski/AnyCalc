@@ -21,4 +21,8 @@
     <string name="calc_keypad_key_c">\u2190</string>
     <string name="calc_keypad_key_obelus">\u00F7</string>
     <string name="calc_keypad_key_multiplication">\u00D7</string>
+
+    <!--RPNCalculator-->
+    <string name="rpn_divide_by_zero">(Divide by zero!)</string>
+    <string name="rpn_unsupported_error">(Error)</string>
 </resources>

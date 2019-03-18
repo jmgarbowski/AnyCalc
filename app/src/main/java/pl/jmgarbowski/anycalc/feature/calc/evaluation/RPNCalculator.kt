@@ -1,5 +1,7 @@
 package pl.jmgarbowski.anycalc.feature.calc.evaluation
 
+import android.content.Context
+import pl.jmgarbowski.anycalc.R
 import java.lang.NumberFormatException
 import java.util.*
 import javax.inject.Inject
@@ -8,13 +10,7 @@ import kotlin.collections.ArrayList
 /**
  * Reverse Polish Notation calculator
  */
-class RPNCalculator @Inject constructor() : Calculator {
-
-    companion object {
-        //calc errors
-        const val divideZeroError = "(Divide by zero!)"
-        const val unsupportedEquation = "(Error)"
-    }
+class RPNCalculator @Inject constructor(private val context: Context) : Calculator {
 
     override fun evaluate(input: String): String {
 
@@ -44,7 +40,7 @@ class RPNCalculator @Inject constructor() : Calculator {
                         Operator.multiply.toString() -> result = nextNumber * firstNumber
                         Operator.division.toString() -> {
                             if (firstNumber == 0.0) {
-                                return divideZeroError
+                                return context.getString(R.string.rpn_divide_by_zero)
                             } else {
                                 result = nextNumber / firstNumber
                             }
@@ -52,14 +48,14 @@ class RPNCalculator @Inject constructor() : Calculator {
                     }
                     stack.push(result.toString())
                 } catch (e: EmptyStackException) {
-                    return unsupportedEquation
+                    return context.getString(R.string.rpn_unsupported_error)
                 }
 
             }
         }
 
         return if (!stack.empty()) stack.peek()
-        else unsupportedEquation
+        else context.getString(R.string.rpn_unsupported_error)
     }
 
     private fun convertToPostfix(infixInput: String): ArrayList<String> {
